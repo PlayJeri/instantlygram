@@ -46,16 +46,20 @@ function submitLike(meep_id){
   .then(data => {
     if (data) {
       likeButton = document.getElementById(`like-button-${meep_id}`)
-      likeCounter = document.getElementById(`${meep_id}-like-count`)
+      likeCounter = document.getElementById(`like-count-${meep_id}`)
 
-      if (data.like) {
+      if (data.like === true) {
         likeButton.classList.remove('btn-primary');
-        likeButton.classList.add('btn-success');
-        likeCounter.textContent = parseInt(likeCount.textContent) + 1;
+        likeButton.classList.remove('btn-success');
+        likeButton.classList.add('btn-danger');
+        likeButton.textContent = 'Unlike'
+        likeCounter.textContent = parseInt(likeCounter.textContent) + 1;
       } else {
         likeButton.classList.remove('btn-secondary');
-        likeButton.classList.add('btn-danger');
-        likeCounter.textContent = parseInt(likeCount.textContent) - 1;
+        likeButton.classList.remove('btn-danger');
+        likeButton.classList.add('btn-success');
+        likeButton.textContent = 'Like'
+        likeCounter.textContent = parseInt(likeCounter.textContent) - 1;
       }
     } else {
       console.error('Invalid response from server:', data);

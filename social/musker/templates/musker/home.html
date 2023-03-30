@@ -52,9 +52,13 @@
                         <button id="like-button-{{ meep.id }}"
                                 onclick="submitLike({{ meep.id }})"
                                     class="btn btn-secondary">
+                                    {% if request.user in meep.likes.all %}
                                     Unlike
+                                    {% else %}
+                                    Like
+                                    {% endif %}
                         </button>
-                        <p id="{{ meep.id }}-like-count">3</p>
+                        <p id="like-count-{{ meep.id }}">{{ meep.likes.count }}</p>
                     </div>
                 </div>
                 <h6 class="card-title text-center">Comments</h6>
