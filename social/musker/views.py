@@ -9,38 +9,35 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url='login')
 def home(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            meep_form = MeepForm(request.POST, request.FILES)
-            if meep_form.is_valid():
-                meep = meep_form.save(commit=False)
-                meep.user = request.user
-                if 'meep_image_url' in request.FILES:
-                    meep.meep_image_url = request.FILES['meep_image_url']
-                meep.save()
-                return redirect('home')
-            
-        current_user = request.user.profile
-        meep_form = MeepForm()
-        comment_form = CommentForm()
-        suggested_users = User.objects.order_by('?')[:5]
-        meeps = Meep.objects.filter(user__profile__in=current_user.follows.all()).order_by("-created_at")
-        paginator = Paginator(meeps, 5)
-        page = request.GET.get('page')
-        meeps = paginator.get_page(page)
+    if request.method == "POST":
+        meep_form = MeepForm(request.POST, request.FILES)
+        if meep_form.is_valid():
+            meep = meep_form.save(commit=False)
+            meep.user = request.user
+            if 'meep_image_url' in request.FILES:
+                meep.meep_image_url = request.FILES['meep_image_url']
+            meep.save()
+            return redirect('home')
+        
+    current_user = request.user.profile
+    meep_form = MeepForm()
+    comment_form = CommentForm()
+    suggested_users = User.objects.order_by('?')[:5]
+    meeps = Meep.objects.filter(user__profile__in=current_user.follows.all()).order_by("-created_at")
+    paginator = Paginator(meeps, 5)
+    page = request.GET.get('page')
+    meeps = paginator.get_page(page)
 
-        context = {
-            "meeps":meeps,
-            "meep_form":meep_form,
-            "comment_form":comment_form,
-            "suggested_users":suggested_users
-        }
+    context = {
+        "meeps":meeps,
+        "meep_form":meep_form,
+        "comment_form":comment_form,
+        "suggested_users":suggested_users
+    }
 
-        return render(request, 'musker/home.html', context)
-    
-    else:
-        return redirect('login')
+    return render(request, 'musker/home.html', context)
 
 def profile_list(request):
     if request.user.is_authenticated:
@@ -136,8 +133,6 @@ def update_user(request):
         pp_form = ProfilePictureForm()
     return render(request, 'musker/update_user.html', {'form':form, 'ppf':pp_form})
 
-
-
 @login_required
 def comment(request, meep_id):
     comment_data = {'body': '', 'user': '', 'created_at': ''}
@@ -165,7 +160,6 @@ def like(request, meep_id):
     else:
         meep.likes.add(request.user)
         return JsonResponse({'like': True})
-
 
 @login_required
 def search(request, search_query):
