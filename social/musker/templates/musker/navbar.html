@@ -1,0 +1,67 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="width: 100%; top: 0px;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'home' %}">Musker</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile_list' %}">Profile List</a>
+          </li>
+
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile' request.user.id %}">My Profile</a>
+          </li>
+          {% endif %}
+        </ul>
+
+        <div class="dropdown position-relative px-2">
+          <input class="form-control dropdown-toggle" placeholder="Search..." autocomplete="off" type="text" id="search-input" data-bs-toggle="dropdown" aria-expanded="false">
+          <ul class="dropdown-menu autocomplete-container">
+          </ul>
+        </div>
+
+            {% if user.is_authenticated %}
+              <!-- Button trigger modal -->
+              <li class="nav-item d-flex mx-2">
+              <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                Logout
+            </button>
+            </li>
+            
+            <!-- Modal -->
+            <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure you want to logout</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{% url 'logout' %}">
+                        <button type="button" class="btn btn-danger">Logout</button>
+                    </a>
+                    </div>
+                </div>
+                </div>
+            </div>
+            {% else %}
+            <li class="nav-item d-flex mx-2">
+              <a class="nav-link" href="{% url 'login' %}">
+                <button class="btn btn-outline-primary">Login</button>
+              </a>
+            </li>
+
+            <li class="nav-item d-flex">
+              <a class="nav-link" href="{% url 'register' %}">
+                <button class="btn btn-outline-warning">Register</button>
+              </a>
+            </li>
+            {%  endif %}
+      </div>
+    </div>
+  </nav>
+  <br><br>

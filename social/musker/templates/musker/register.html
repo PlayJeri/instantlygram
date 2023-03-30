@@ -1,0 +1,65 @@
+{% extends 'musker/base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="row text-center">
+
+        
+        <h1>Register</h1>
+        
+    </div>
+    
+        <br><br>
+        
+        <div class="row text-center">
+
+            {% if form.errors %}
+            {% for field in form %}
+            {% for error in field.errors %} 
+            <div class="alert alert-info" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+            
+        </div>
+
+    <br><br>
+    
+    <form class="row g-3 needs-validation text-center" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="col-md-4 position-relative">
+          <label for="{{ form.first_name.id_for_label }}" class="form-label">First name</label>
+          {{ form.first_name }}
+
+        </div>
+        <div class="col-md-4 position-relative">
+          <label for="{{ form.last_name.id_for_label }}" class="form-label">Last name</label>
+          {{ form.last_name }}
+        </div>
+        <div class="col-md-4 position-relative">
+          <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+          <div class="input-group has-validation">
+            {{ form.username }}
+          </div>
+        </div>
+        <div class="col-md-6 position-relative">
+          <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+          {{ form.email }}
+        </div>
+        <div class="col-md-3 position-relative">
+          <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+          {{ form.password1 }}
+        </div>
+        <div class="col-md-3 position-relative">
+          <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm password</label>
+          {{ form.password2 }}
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">Register</button>
+        </div>
+      </form>
+
+    {% endblock %}

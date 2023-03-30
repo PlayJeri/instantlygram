@@ -1,0 +1,102 @@
+{% extends 'musker/base.html' %}
+{% load static %}
+
+
+{% block content  %}
+
+    <div class="row">
+        <div class="col-xl-3 col-lg-8 col-sm-12 mx-auto py-2">
+            <div class="card" style="position: sticky; top: 60px;">
+                <div class="card-header text-center">
+                  Suggested users
+                </div>
+                <ul class="list-group list-group-flush my-auto">
+                    {% for user in suggested_users %}
+                    <a href="{% url 'profile' user.id %}" style="text-decoration: none; color: inherit;">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {% if user.profile.profile_image_url %}
+                            <img src="{{ user.profile.profile_image_url.url }}" class="rounded-pill" style="height: 40px; width: 40px;">
+                            {% else %}
+                            <img src="{% static 'images/profile_pic.jpeg' %}" class="rounded-pill" style="height: 40px; width: 40px;">
+                            {% endif %}
+                            {{ user.username }}
+                            <span class="ml-auto text-body-secondary">
+                                Followers: {{ user.profile.follows.all.count }}
+                            </span>
+                        </li>
+                    </a>
+                    {% endfor %}
+                </ul>
+              </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 py-2 order-2 order-lg-3 order-md-3 order-sm-3 order-xs-3">
+            
+            {% for meep in meeps %}
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="col-6 my-auto d-flex">
+                        {% if meep.user.profile.profile_image_url %}
+                        <img src="{{ meep.user.profile.profile_image_url.url }}" class="rounded-pill" style="height: 80px; width: 80px;">
+                        {% else %}
+                        <img src="{% static 'images/profile_pic.jpeg' %}" class="rounded-pill" style="height: 80px; width: 80px;">
+                        {% endif %}
+                        <h5 class="card-title mx-2 my-auto">{{ meep.user.username }}</h5>
+                    </div>
+                    {% if meep.meep_image_url %}
+                    <img src="{{ meep.meep_image_url.url }}" class="card-img-top img-fluid" alt="meep_image" style="object-fit: contain; max-height: 400px; width: 100%; height: auto;">
+                    {% endif %}
+                    <div class="card-body">
+                        <p class="card-text">{{ meep.body }}</p>
+                        <p class="card-text"><small class="text-body-secondary">{{ meep.created_at }}</small></p>
+                        <button id="like-button-{{ meep.id }}"
+                                onclick="submitLike({{ meep.id }})"
+                                    class="btn btn-secondary">
+                                    Unlike
+                        </button>
+                        <p id="{{ meep.id }}-like-count">3</p>
+                    </div>
+                </div>
+                <h6 class="card-title text-center">Comments</h6>
+                <div class="card-body">
+                    {% if meep.comments.all %}
+                    {% for comment in meep.comments.all|dictsortreversed:'created_at' %}
+                    <div class="comment-container" id="comment-container-{{ meep.id }}">
+                    </div>  
+                    <div class="col d-flex justify-content-between">
+                        <p class="card-text">{{ comment.user.username }}:  {{ comment.body }}</p>
+                        <p class="card-text"><small class="text-body-secondary">@ {{ comment.created_at }}</small></p>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    <form id="comment-form-{{meep.id}}" method="POST" onsubmit="submitComment(event, {{ meep.id }} );">
+                        {% csrf_token %}
+                        {{ comment_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Comment</button>
+                    </form>
+                </div>
+            </div>
+                    <br><br><br>
+
+            {% endfor %}
+
+            <div class="pagination justify-content-center">
+                {% if meeps.has_next %}
+                    <a href="?page={{ meeps.next_page_number }}">
+                        <button class="btn btn-primary" id="load-more-button">Load more</button>
+                    </a>
+                {% endif %}
+            </div>
+            
+        </div>
+
+        <div class="col-xl-3 col-lg-8 order-xl-3 col-sm-12 text-center mx-auto py-2">
+            <form method="POST" enctype="multipart/form-data" style="position: sticky; top: 60px;">
+                {% csrf_token %}
+                {{ meep_form.as_p }}
+                <button type="submit" class="btn btn-secondary">Meep</button>
+            </form>
+        </div>
+    </div>
+    <script src="{% static 'js/home.js' %}"></script>
+{% endblock %}

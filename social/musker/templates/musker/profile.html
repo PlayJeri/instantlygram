@@ -1,0 +1,116 @@
+{% extends 'musker/base.html' %}
+{% load static %}
+
+{% block content  %}
+{% if profile %}
+
+        <div class="row text-center">
+            <h1>{{ profile.user.username }}'s Profile</h1>
+            <div class="col-8">
+
+                <br><br>
+
+                {% for meep in meeps %}
+        
+                    <div class="alert alert-light text-left" role="alert" 
+                         style="box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);">
+                        {{ meep.body }}<br><br>{{ meep.created_at }}
+                    </div>
+                    <br>
+        
+                {% endfor %}
+
+            </div>
+
+    <br>
+
+    <div class="col-4 my-4">
+
+        <br>
+
+        {% if profile.profile_image_url %}
+        <div class="card">
+            <img src="{{ profile.profile_image_url.url }}" class="card-img-top" alt="profile picture">
+          </div>
+        {% endif %}
+
+        <br><br>
+
+        <div class="card">
+            <h5 class="card-header">Follows</h5>
+            <div class="card-body">
+              <p class="card-text">
+                  {% for following in profile.follows.all %}
+                    {% if profile.user.username != following.user.username %}
+                
+                        <a href="{% url 'profile' following.user.id %}">
+                            @{{ following }}
+                        </a>
+                        <br>
+
+                      {% endif %}
+                  {% endfor %}
+              </p>
+            </div>
+        </div>
+        
+        <br><br>
+
+        <div class="card">
+            <h5 class="card-header">Followed By</h5>
+            <div class="card-body">
+              <p class="card-text">
+                  {% for following in profile.followed_by.all %}
+                    {% if profile.user.username != following.user.username %}
+                  
+                        <a href="{% url 'profile' following.user.id %}">
+                            @{{ following }}
+                        </a>
+                        <br>
+
+                    {% endif %}
+                  {% endfor %}
+              </p>
+            </div>
+        </div>
+        <br><br>
+        {% if user.username != profile.user.username %}
+        {% if profile in user.profile.follows.all %}
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#unfollowModal">
+            Unfollow
+        </button>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="unfollowModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure you want to unfollow {{ profile }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{% url 'unfollow' %}?id={{ profile.id }}&user_id={{ profile.user.id }}">
+                    <button type="button" class="btn btn-danger">Unfollow</button>
+                </a>
+                </div>
+            </div>
+            </div>
+        </div>
+        {% else %}
+        <a href="{% url 'follow' %}?id={{ profile.id }}&user_id={{ profile.user.id }}">
+
+            <button type="button" class="btn btn-outline-success">Follow</button>
+        </a>
+        {% endif %}
+        {% else %}
+            <a href="{% url 'update_user' %}">
+                <button type="button" class="btn btn-outline-info">Update profile</button>
+            </a>
+        {% endif %}
+        </div>
+        </div>
+    
+{% endif %}
+{% endblock %}
